@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Elianto';
+    src: url('../public/fonts/Elianto-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+@font-face {
+    font-family: 'Nidus Sans';
+    src: url('../public/fonts/Nidus-Sans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  

@@ -1,0 +1,61 @@
+
+.creatorContainer {
+  height: 90vh;
+  border: 1px solid red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.creatorForm {
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(167, 167, 167, 0.2);
+  padding: 40px;
+  width: max-content;
+  text-align: center;
+}
+
+.creatorForm label {
+  margin-bottom: 5px;
+  font-size: 16px;
+  text-align: left;
+}
+
+.creatorForm input,
+.creatorForm select {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid white;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  font-size: 16px;
+  width: 100%;
+  background-color: black;
+}
+
+.creatorForm input {
+  height: 40px;
+}
+
+.creatorForm select {
+  height: 40px;
+}
+
+.creatorForm .inputContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.button {
+  border: 1px solid white;
+  background-color: white;
+  border-radius: 1rem;
+  color: black;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.button:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: 0.5s;
+}

@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('./fonts.css');
+
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@100;400;800&family=Roboto:wght@100;400;700&display=swap');
+
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -13,7 +18,7 @@
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
-  }
+}
 }
 
 body {
@@ -24,4 +29,34 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+.login-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  border: 1px solid red;
+}
+.login-container h1 {
+  font-family: 'Elianto', sans-serif;
+  text-align: right;
+  font-size: 3rem;
+  margin: 2rem;
+}
+.login-container button {
+  font-family: 'Nidus Sans', sans-serif;
+  text-align: center;
+  align-self: center;
+  width: 60%;
+  font-size: 1rem;
+  border: 1px solid black;
+  border-radius: 1.5rem;
+  padding: 15px;
+}
+.login-container button:hover {
+  border: 1px solid white;
+  background-color: white;
+  transition: 1s;
+  color: black;
 }
