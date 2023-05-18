@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc, getDoc, getCollection, query, where, onSnapshot, refEqual } from "firebase/firestore";
 import {app, db, firebaseConfig} from '../lib/firebase'
 import styles from "./createCharacter.module.css";
 import { useSession } from "next-auth/react";
@@ -17,33 +17,34 @@ const CreateCharacter = () => {
     return <div>Carregando...</div>;
   }
   
-  const ref = collection(db, 'users')
-  const userRef = doc(ref, session.user.email)
-  const characterCollectionRef = collection(userRef, 'characters')
-
   const handleCreateCharacter = async (user) => {
     try {
-      function generateCode() {
-        const randomNumber = Math.floor(Math.random() * 1000000);
-        const code = randomNumber.toString().padStart(6, "0");
-        return code;
+      function generateCode() { //Create random code
+           const randomNumber = Math.floor(Math.random() * 1000000);
+           const code = randomNumber.toString().padStart(6, "0");
+           return code;
       }
-      const owner = user.email
       setCharacterCode(generateCode())
-      await setDoc(doc(db, characterCollectionRef, name), {
-        
-          name,
-          system,
-          bloodType,
-          imageUrl,
-          owner,
-          characterCode,
-      
-      });
-      console.log('Dados do usuário salvos com sucesso no Firestore');
+      const ref = doc(db, 'users', session.user.email, 'characters', characterCode);
+      const docSnap = await getDoc(ref); //Get Document
+      if (!docSnap.exists()) {
+        //If code doesn't exist, then create it
+        await setDoc(ref, {
+            name: name,
+            system: system,
+            bloodType: bloodType,
+            imageUrl: imageUrl,
+            owner: session.user.email,
+            characterCode: characterCode,
+        });
+      } else {
+        // Repeat if code already exists
+        handleCreateCharacter()
+      }
     } catch (error) {
       console.error("Error creating character:", error);
     }
+    
   };
 
   return (
