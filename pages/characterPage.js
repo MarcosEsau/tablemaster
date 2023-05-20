@@ -12,7 +12,7 @@ const CreateCharacter = () => {
 
   useEffect(() => {
     if (status === "loading") {
-      return; // Aguardar até que o status da sessão esteja pronto
+      return;
     }
 
     if (!session && !autoLoginDone) {
@@ -51,9 +51,6 @@ const CreateCharacter = () => {
   if (!character) {
     return <div>Carregando...</div>;
   }
-
-  // Utilize os dados do objeto character aqui
-  // Exemplo: const nome = character.nome;
 
   return (
     <div>
