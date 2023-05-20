@@ -1,0 +1,12 @@
+.name {
+    margin: 3px;
+    padding: 0.4rem 1rem;
+    border-radius: 0.8rem;
+    border: 1px solid rgb(48, 48, 48);
+    text-align: left;
+    
+}
+.name h1{
+    text-align: left;
+    font-family: 'Nidus Sans', sans-serif;
+}

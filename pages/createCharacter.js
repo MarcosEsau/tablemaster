@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { collection, addDoc, setDoc, doc, getDoc, getCollection, query, where, onSnapshot, refEqual } from "firebase/firestore";
 import {app, db, firebaseConfig} from '../lib/firebase'
 import styles from "./createCharacter.module.css";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const CreateCharacter = () => {
   const [name, setName] = useState("");
@@ -13,18 +14,25 @@ const CreateCharacter = () => {
 
   const { data: session } = useSession();
 
+  const router = useRouter();
+  function generateCode() { //Create random code
+    const randomNumber = Math.floor(Math.random() * 1000000);
+    const code = randomNumber.toString().padStart(6, "0");
+    setCharacterCode(code);
+  }
+  useEffect(() => {
+    generateCode();
+    console.log(characterCode)
+  }, [""]);
+
+  
+
   if (!session) {
     return <div>Carregando...</div>;
   }
   
   const handleCreateCharacter = async (user) => {
-    try {
-      function generateCode() { //Create random code
-           const randomNumber = Math.floor(Math.random() * 1000000);
-           const code = randomNumber.toString().padStart(6, "0");
-           return code;
-      }
-      setCharacterCode(generateCode())
+    try { 
       const ref = doc(db, 'users', session.user.email, 'characters', characterCode);
       const docSnap = await getDoc(ref); //Get Document
       if (!docSnap.exists()) {
@@ -37,6 +45,12 @@ const CreateCharacter = () => {
             owner: session.user.email,
             characterCode: characterCode,
         });
+        router.push({
+          pathname: '/characterPage',
+          query: {
+            id: characterCode,
+          }
+        })
       } else {
         // Repeat if code already exists
         handleCreateCharacter()
@@ -107,12 +121,7 @@ const CreateCharacter = () => {
           className={styles.button}
         >
           Criar Personagem
-        </button>
-        {characterCode && (
-        <p className={styles.characterCode}>
-          Código de Personagem: <span>{characterCode}</span>
-        </p>
-      )}
+        </button> 
       </form>
       
     </div>
