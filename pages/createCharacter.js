@@ -4,6 +4,7 @@ import {app, db, firebaseConfig} from '../lib/firebase'
 import styles from "./createCharacter.module.css";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import Image from 'next/image';
 
 const CreateCharacter = () => {
   const [name, setName] = useState("");
