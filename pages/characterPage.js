@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { collection, addDoc, setDoc, doc, getDoc, getCollection, query, where, onSnapshot, refEqual } from "firebase/firestore";
 import {app, db, firebaseConfig} from '../lib/firebase'
 import styles from "./characterPage.module.css";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { faStepForward } from "@fortawesome/free-solid-svg-icons";
 
 const CreateCharacter = () => {
   const { data: session, status } = useSession();
@@ -15,6 +16,8 @@ const CreateCharacter = () => {
   const [bloodType, setBloodType] = useState("");
   const [system, setSystem] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [owner, setOwner] = useState('')
+  const [permission, setPermission] = useState(false)
 
   useEffect(() => {
     if (status === "loading") {
@@ -42,11 +45,20 @@ const CreateCharacter = () => {
         setName(characterData.name);
         setSystem(characterData.system);
         setImageUrl(characterData.imageUrl);
+        setOwner(characterData.owner);
       }
     };
 
     fetchCharacter();
   }, [session, characterCode, editMode]);
+
+  useEffect(() => {
+    if (session.user.email == owner) {
+      setPermission(true)
+    } else {
+      setPermission(false)
+    }
+  })
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -112,9 +124,9 @@ const CreateCharacter = () => {
 
           <p>Sangue: {character.bloodType}</p>
           <p>Sistema: {character.system}</p>
-          <button onClick={handleEditClick}>Editar</button>
         </div>
       )}
+      {permission ? (<button onClick={handleEditClick}>Editar</button>) : (<div></div>)}
     </div>
   );
 };
