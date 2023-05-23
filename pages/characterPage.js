@@ -1,68 +1,96 @@
-import React, { useState, useEffect, use } from "react";
-import { collection, addDoc, setDoc, doc, getDoc, getCollection, query, where, onSnapshot, refEqual } from "firebase/firestore";
-import {app, db, firebaseConfig} from '../lib/firebase'
+import React, { useState, useEffect, useReducer } from "react";
+import { setDoc, doc, getDoc } from "firebase/firestore";
+import { db } from '../lib/firebase'
 import styles from "./characterPage.module.css";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import Image from "next/image";
-import { faStepForward } from "@fortawesome/free-solid-svg-icons";
+
+const initialState = {
+  autoLoginDone: false,
+  character: null,
+  editMode: false,
+  name: "",
+  bloodType: "",
+  system: "",
+  imageUrl: "",
+  owner: "",
+  permission: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "SET_AUTO_LOGIN_DONE":
+      return { ...state, autoLoginDone: true };
+    case "SET_CHARACTER":
+      return { ...state, character: action.payload };
+    case "SET_EDIT_MODE":
+      return { ...state, editMode: action.payload };
+    case "SET_NAME":
+      return { ...state, name: action.payload };
+    case "SET_BLOOD_TYPE":
+      return { ...state, bloodType: action.payload };
+    case "SET_SYSTEM":
+      return { ...state, system: action.payload };
+    case "SET_IMAGE_URL":
+      return { ...state, imageUrl: action.payload };
+    case "SET_OWNER":
+      return { ...state, owner: action.payload };
+    case "SET_PERMISSION":
+      return { ...state, permission: action.payload };
+    default:
+      return state;
+  }
+};
+
 
 const CreateCharacter = () => {
-  const { data: session, status } = useSession();
-  const [autoLoginDone, setAutoLoginDone] = useState(false);
-  const [character, setCharacter] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-  const [name, setName] = useState("");
-  const [bloodType, setBloodType] = useState("");
-  const [system, setSystem] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [owner, setOwner] = useState('')
-  const [permission, setPermission] = useState(false)
+  const [session, setSession] = useState(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { autoLoginDone, character, editMode, name, bloodType, system, imageUrl, owner, permission } = state;
+
 
   useEffect(() => {
-    if (status === "loading") {
-      return;
-    }
-    if (!session && !autoLoginDone) {
-      signIn('google');
-      console.log('Not Logged In');
-      setAutoLoginDone(true);
-    } else {
-      console.log('LoggedIn');
-    }
-  }, [session, autoLoginDone, status]);
+    const fetchSession = async () => {
+      const response = await fetch("/api/auth");
+      const { session } = await response.json();
+      setSession(session);
+
+      if (!session) {
+        router.replace("/login"); // Redirecionar para a página de login se a sessão não estiver presente
+      }
+    };
+
+    fetchSession();
+  }, []);
 
   const router = useRouter()
   const characterCode = router.query.id
   
   useEffect(() => {
     const fetchCharacter = async () => {
-      const characterRef = doc(db, "users", session.user.email, "characters", characterCode);
-      const characterDoc = await getDoc(characterRef);
-      if (characterDoc.exists()) {
-        const characterData = characterDoc.data();
-        setCharacter(characterData);
-        setName(characterData.name);
-        setSystem(characterData.system);
-        setImageUrl(characterData.imageUrl);
-        setOwner(characterData.owner);
+      if (session && session.user) {
+        const characterRef = doc(db, "users", session.user.email, "characters", characterCode);
+        const characterDoc = await getDoc(characterRef);
+        if (characterDoc.exists()) {
+          const characterData = characterDoc.data();
+          dispatch({ type: "SET_CHARACTER", payload: characterData });
+          dispatch({ type: "SET_NAME", payload: characterData.name });
+          dispatch({ type: "SET_SYSTEM", payload: characterData.system });
+          dispatch({ type: "SET_IMAGE_URL", payload: characterData.imageUrl });
+          dispatch({ type: "SET_OWNER", payload: characterData.owner });
+          dispatch({ type: "SET_PERMISSION", payload: session.user.email === characterData.owner });
+        }
       }
     };
-
+  
     fetchCharacter();
   }, [session, characterCode, editMode]);
-
-  useEffect(() => {
-    if (session.user.email == owner) {
-      setPermission(true)
-    } else {
-      setPermission(false)
-    }
-  })
+  
 
   const handleEditClick = () => {
-    setEditMode(true);
+    dispatch({ type: "SET_EDIT_MODE", payload: true });
   };
+  
   const handleApplyChanges = async () => {
     const characterRef = doc(db, "users", session.user.email, "characters", characterCode);
     await setDoc(characterRef, {
@@ -71,11 +99,8 @@ const CreateCharacter = () => {
       system,
       imageUrl,
     });
-    setEditMode(false);
+    dispatch({ type: "SET_EDIT_MODE", payload: false });
   };
-
-  
-
   
 
   if (!character) {
@@ -87,10 +112,10 @@ const CreateCharacter = () => {
       {editMode ? (
         <div className={styles.title}>
           <h1>Alterar</h1>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-          <input type="text" value={bloodType} onChange={(e) => setBloodType(e.target.value)} />
-          <input type="text" value={system} onChange={(e) => setSystem(e.target.value)} />
-          <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+          <input type="text" value={name} onChange={(e) => dispatch({ type: "SET_NAME", payload: e.target.value })} />
+          <input type="text" value={bloodType} onChange={(e) => dispatch({ type: "SET_BLOOD_TYPE", payload: e.target.value })} />
+          <input type="text" value={system} onChange={(e) => dispatch({ type: "SET_SYSTEM", payload: e.target.value })} />
+          <input type="text" value={imageUrl} onChange={(e) => dispatch({ type: "SET_IMAGE_URL", payload: e.target.value })} />
           <button onClick={handleApplyChanges}>Aplicar Alterações</button>
         </div>
       ) : (
@@ -126,7 +151,7 @@ const CreateCharacter = () => {
           <p>Sistema: {character.system}</p>
         </div>
       )}
-      {permission ? (<button onClick={handleEditClick}>Editar</button>) : (<div></div>)}
+      {permission ? (<button onClick={handleEditClick}>Editar</button>) : null}
     </div>
   );
 };
