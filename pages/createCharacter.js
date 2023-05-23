@@ -1,25 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { collection, addDoc, setDoc, doc, getDoc, getCollection, query, where, onSnapshot, refEqual } from "firebase/firestore";
-import {app, db, firebaseConfig} from '../lib/firebase'
+import React, { useState, useEffect, useReducer } from "react";
+import { setDoc, doc, getDoc } from "firebase/firestore";
+import { db } from '../lib/firebase'
 import styles from "./createCharacter.module.css";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import Image from 'next/image';
+
+const initialState = {
+  name: '',
+  bloodType: 'red',
+  system: 'GLASS',
+  imageUrl: '',
+  characterCode: '',
+}
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "SET_NAME":
+      return { ...state, name: action.payload };
+    case "SET_BLOOD_TYPE":
+      return { ...state, bloodType: action.payload };
+    case "SET_SYSTEM":
+      return { ...state, system: action.payload };
+    case "SET_IMAGE_URL":
+      return { ...state, imageUrl: action.payload };
+    case "SET_CODE":
+      return { ...state, characterCode: action.payload };
+    default:
+      return state;
+  }
+};
 
 const CreateCharacter = () => {
-  const [name, setName] = useState("");
-  const [system, setSystem] = useState("GLASS");
-  const [bloodType, setBloodType] = useState("red");
-  const [imageUrl, setImageUrl] = useState("");
-  const [characterCode, setCharacterCode] = useState("");
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { name, bloodType, system, imageUrl, characterCode } = state;
 
   const { data: session } = useSession();
-
   const router = useRouter();
+
   function generateCode() { //Create random code
     const randomNumber = Math.floor(Math.random() * 1000000);
     const code = randomNumber.toString().padStart(6, "0");
-    setCharacterCode(code);
+    dispatch({ type: "SET_CODE", payload: code });
   }
   useEffect(() => {
     generateCode();
@@ -73,7 +93,7 @@ const CreateCharacter = () => {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => dispatch({ type: "SET_NAME", payload: e.target.value })}
             className={styles.input}
           />
         </label>
@@ -83,7 +103,7 @@ const CreateCharacter = () => {
             Sistema:
             <select
               value={system}
-              onChange={(e) => setSystem(e.target.value)}
+              onChange={(e) => dispatch({ type: "SET_SYSTEM", payload: e.target.value })}
               className={styles.select}
             >
               <option value="GLASS">GLASS</option>
@@ -95,7 +115,7 @@ const CreateCharacter = () => {
             Tipo Sanguíneo:
             <select
               value={bloodType}
-              onChange={(e) => setBloodType(e.target.value)}
+              onChange={(e) => dispatch({ type: "SET_BLOOD_TYPE", payload: e.target.value })}
               className={styles.select}
             >
               <option value="red">Vermelho</option>
@@ -111,7 +131,7 @@ const CreateCharacter = () => {
           <input
             type="text"
             value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
+            onChange={(e) => dispatch({ type: "SET_IMAGE_URL", payload: e.target.value })}
             className={styles.input}
           />
         </label>
