@@ -45,7 +45,7 @@ body {
   font-size: 3rem;
   margin: 2rem;
 }
-.login-container button {
+.login-container button, .session {
   font-family: 'Nidus Sans', sans-serif;
   text-align: center;
   align-self: center;
@@ -55,9 +55,19 @@ body {
   border-radius: 1.5rem;
   padding: 15px;
 }
-.login-container button:hover {
+.login-container button:hover, .session:hover {
   border: 1px solid white;
   background-color: white;
   transition: 1s;
   color: black;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.session {
+  width: 100%;
+  border: .5px solid white;
 }
