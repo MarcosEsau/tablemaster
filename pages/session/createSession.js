@@ -16,7 +16,7 @@ const CreateSession = () => {
 
   const handleCreateSession = async (user) => {
     if (id == '' || passkey == '') {
-        alert('Preencha os campos corretamente')
+        alert('Preencha os Campos')
     } else {
     try { 
       const ref = doc(db, 'sessions', id);
@@ -29,7 +29,7 @@ const CreateSession = () => {
             owner: user.email,
         });
         router.push({
-          pathname: '/session/sessionPage',
+          pathname: '/session/session',
           query: {
             id: id,
           }
