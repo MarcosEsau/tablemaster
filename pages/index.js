@@ -13,6 +13,9 @@ export default function Home() {
   const handleCreateCharacter = () => {
     router.push('/createCharacter')
   }
+  const handleCreateSession = () => {
+    router.push('/session/createSession')
+  }
   
   // Save user data in Firestore db
   const saveUserData = async (user) => {
@@ -49,26 +52,6 @@ export default function Home() {
     );
   };
 
-  const handleTestSubmit = async (user) => {
-    const q = query(collection(db, 'users'), where('email', '==', user.email));
-
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
-    });
-  }
-
-  const retrieveData = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      const data = querySnapshot.docs.map(doc => doc.data());
-      console.log('Data retrieved successfully:', data);
-    } catch (error) {
-      console.error('Error retrieving data:', error);
-    }
-  };
-  retrieveData()
   return (
     <>
       <header>
@@ -76,7 +59,10 @@ export default function Home() {
         <button className='sign-out' onClick={() => signOut('google')}>Sign out</button>
       </header>
       <div className='containerIndex'>
-        <h1>Olá, {session.user.name}</h1>
+        <div className='header'>
+          <h1>Olá, {session.user.name}</h1><button className='session' onClick={handleCreateSession}>Criar uma Sessão</button>
+        </div>
+       
         <div className='create'><h2>Seus Personagens: </h2><button onClick={handleCreateCharacter}>Crie Um Novo</button></div>
       </div>
     </>
