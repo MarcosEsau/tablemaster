@@ -1,13 +1,13 @@
-import {app, db, firebaseConfig} from '../lib/firebase'
-import { collection, addDoc, doc, setDoc, updateDoc, getDoc, getDocs, query, where } from 'firebase/firestore'
+import { db } from '../lib/firebase'
+import { collection, doc, setDoc, getDoc, getDocs, query } from 'firebase/firestore'
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import CharactersCard from '@/components/CharactersCard';
 
 export default function Home() {
   const { data: session } = useSession();
-  const [username, setUsername] = useState('');
-  const [newUsername, setNewUsername] = useState('');
+  const [characters, setCharacters] = useState([]);
   const router = useRouter();
   
   const handleCreateCharacter = () => {
@@ -29,6 +29,22 @@ export default function Home() {
       console.error('Erro ao salvar dados do usuário no Firestore:', error);
     }
   };
+
+  useEffect(() => {
+    const fetchCharacter = async () => {
+      if (session && session.user) {
+        const q = query(collection(db, "users", session.user.email, "characters"))
+        const querySnapshot = await getDocs(q);
+        const characterList = [];
+        querySnapshot.docs.forEach((doc) => {
+          characterList.push(doc.data());
+        });
+        setCharacters(characterList);
+      }
+    };
+  
+    fetchCharacter();
+  }, [session]);
 
   
   if (session) {
@@ -64,6 +80,11 @@ export default function Home() {
         </div>
        
         <div className='create'><h2>Seus Personagens: </h2><button onClick={handleCreateCharacter}>Crie Um Novo</button></div>
+        <div className='charactersWrapper'>
+          {characters.map((character) => (
+            <CharactersCard key={character.id} character={character} />
+          ))}
+        </div>
       </div>
     </>
   );
