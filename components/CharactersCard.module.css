@@ -5,7 +5,7 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 16px;
-    width: 300px;
+    width: 350px;
     margin: 16px;
   }
   
@@ -31,14 +31,17 @@
     font-size: 16px;
     margin-bottom: 8px;
   }
+  .buttonSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .buttonSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
   
-  .button {
-    background-color: #0070f3;
-    color: white;
-    font-size: 16px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
+  .join {
+    margin: 2rem;
+
   }
   
