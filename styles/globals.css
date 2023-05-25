@@ -71,3 +71,17 @@ body {
   width: 100%;
   border: .5px solid white;
 }
+
+.charactersWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+@media (max-width: 480px) {
+  .charactersWrapper {
+    align-items: center;
+    align-self: center;
+  }
+}
+
