@@ -56,7 +56,8 @@ const CreateCharacter = () => {
       setSession(session);
 
       if (!session) {
-        router.replace("/login"); // Redirecionar para a página de login se a sessão não estiver presente
+        // router.replace("/login");
+        console.log('Not Logged In')
       }
     };
 
