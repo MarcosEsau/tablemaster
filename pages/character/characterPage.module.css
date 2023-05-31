@@ -1,0 +1,125 @@
+
+
+.title {
+    font-family: 'Nidus Sans', sans-serif;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 25% 75%;
+}
+
+.containerinfo {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+.name {
+    margin: 1px;
+    padding: 0.4rem 0.5rem;
+    border-radius: 0.8rem;
+    border: 1px solid rgb(48, 48, 48);
+    text-align: left;
+    font-size: 1rem;
+}
+.name h1{
+    text-align: left;
+    font-size: 3rem;
+}
+
+.upperInfo {
+    margin-bottom: 4%;
+}
+
+.img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+  }
+
+@media (max-width: 480px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+    }
+    .img {
+        width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+      }
+    .containerinfo {
+        display: grid;
+        width: 100vw;
+        height: 30vh;
+        grid-template-rows: 1fr 1fr 1fr;
+    }
+    .name{
+        font-size: 0.75rem;
+    }
+    .name h1{
+        font-size: 1.5rem;
+    }
+    .ownerPanel {
+        height: fit-content;
+        width: max-content;
+    }
+}
+
+/* CHARACTER EDIT */
+
+.edit {
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .creatorForm {
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(167, 167, 167, 0.2);
+    padding: 40px;
+    width: max-content;
+    text-align: center;
+  }
+  
+  .creatorForm label {
+    margin-bottom: 5px;
+    font-size: 16px;
+    text-align: left;
+  }
+  
+  .creatorForm input,
+  .creatorForm select {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid white;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    font-size: 16px;
+    width: 100%;
+    background-color: black;
+  }
+  
+  .creatorForm input {
+    height: 40px;
+  }
+  
+  .creatorForm select {
+    height: 40px;
+  }
+  
+  .creatorForm .inputContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+.ownerPanel {
+    justify-content: center;
+    position: fixed;
+    bottom: 0; 
+    display: flex;
+    border: 1px solid red;
+    left: 50%;
+    transform: translateX(-50%);
+} 

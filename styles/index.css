@@ -7,7 +7,7 @@ header {
     align-items: center;
     padding: 1rem;
     background: rgb(0,0,0);
-    background: linear-gradient(340deg, rgba(0,0,0,1) 0%, rgba(84,84,83,1) 100%);
+    background: linear-gradient(340deg, rgba(0,0,0,1) 0%, rgba(10,25,41) 100%);
     border-bottom: 1px solid white;
   }
   

@@ -4,6 +4,9 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import CharactersCard from '@/components/CharactersCard';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+
 
 export default function Home() {
   const { data: session } = useSession();
@@ -11,7 +14,7 @@ export default function Home() {
   const router = useRouter();
   
   const handleCreateCharacter = () => {
-    router.push('/createCharacter')
+    router.push('/character/createCharacter')
   }
   const handleCreateSession = () => {
     router.push('/session/createSession')
@@ -79,13 +82,20 @@ export default function Home() {
           <h1>Olá, {session.user.name}</h1><button className='session' onClick={handleCreateSession}>Criar uma Sessão</button>
         </div>
        
-        <div className='create'><h2>Seus Personagens: </h2><button onClick={handleCreateCharacter}>Crie Um Novo</button></div>
+        <div className='create'><h2>Seus Personagens: </h2>
+        <Fab onClick={handleCreateCharacter} variant="extended" color="primary" aria-label="add">
+          <AddIcon sx={{ mr: 1 }} />
+          Criar Personagem
+        </Fab>
+        </div>
         <div className='charactersWrapper'>
           {characters.map((character) => (
-            <CharactersCard key={character.id} character={character} />
+            <CharactersCard key={character.characterCode} character={character} user={session.user.email}/>
+            
           ))}
         </div>
       </div>
     </>
   );
 }
+

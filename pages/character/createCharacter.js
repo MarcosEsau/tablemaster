@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { setDoc, doc, getDoc } from "firebase/firestore";
-import { db } from '../lib/firebase'
+import { setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from '../../lib/firebase'
 import styles from "./createCharacter.module.css";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Box from '@mui/material/Box';
+
+
+
 
 const initialState = {
   name: '',
-  bloodType: 'red',
+  bloodType: 'Vermelho',
   system: 'GLASS',
   imageUrl: '',
   characterCode: '',
@@ -33,8 +41,22 @@ const CreateCharacter = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { name, bloodType, system, imageUrl, characterCode } = state;
 
-  const { data: session } = useSession();
+  const [session, setSession] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const response = await fetch("../api/auth");
+      const { session } = await response.json();
+      setSession(session);
+      if (!session) {
+        // router.replace("/login");
+        console.log('Not Logged In')
+      }
+    };
+
+    fetchSession();
+  }, []);
 
   function generateCode() { //Create random code
     const randomNumber = Math.floor(Math.random() * 1000000);
@@ -52,7 +74,7 @@ const CreateCharacter = () => {
     return <div>Carregando...</div>;
   }
   
-  const handleCreateCharacter = async (user) => {
+  const handleCreateCharacter = async () => {
     try { 
       const ref = doc(db, 'users', session.user.email, 'characters', characterCode);
       const docSnap = await getDoc(ref); //Get Document
@@ -67,7 +89,7 @@ const CreateCharacter = () => {
             characterCode: characterCode,
         });
         router.push({
-          pathname: '/characterPage',
+          pathname: '/',
           query: {
             id: characterCode,
           }
@@ -84,7 +106,70 @@ const CreateCharacter = () => {
 
   return (
     <>
-    <h1 className='big-title'>Criar Personagem</h1>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <div>
+        <h1 className='big-title'>Criar Personagem</h1>
+        <form
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem",
+            width: "50vw",
+          }}
+        >
+            <TextField
+              label="Nome"
+              value={name}
+              onChange={(e) => dispatch({ type: "SET_NAME", payload: e.target.value })}
+              sx={{ width: "100%", backgroundColor: "white" }}
+            />
+          
+            <Select
+              label="Sistema"
+              value={system}
+              onChange={(e) => dispatch({ type: "SET_SYSTEM", payload: e.target.value })}
+              sx={{ width: "100%", backgroundColor: "white" }}
+            >
+              <MenuItem value="GLASS">GLASS</MenuItem>
+            </Select>
+          
+          
+            <Select
+              inputProps={{
+                name: 'age',
+              }}          
+              value={bloodType}
+              onChange={(e) => dispatch({ type: "SET_BLOOD_TYPE", payload: e.target.value })}
+              sx={{ width: "100%", backgroundColor: "white" }}
+            >
+              <MenuItem value="Vermelho">Vermelho</MenuItem>
+              <MenuItem value="Prateado">Prateado</MenuItem>
+              <MenuItem value="Sangue-Novo">Sangue-Novo</MenuItem>
+            </Select>
+       
+         
+            <TextField
+              label="Imagem URL"
+              value={imageUrl}
+              onChange={(e) => dispatch({ type: "SET_IMAGE_URL", payload: e.target.value })}
+              sx={{ width: "100%", backgroundColor: "white" }}
+            />
+         
+          <Button variant="contained" onClick={handleCreateCharacter}>
+            Criar Personagem
+          </Button>
+        </form>
+      </div>
+    </div>
+      
+    {/* <h1 className='big-title'>Criar Personagem</h1>
     <div className={styles.creatorContainer}>
       <form className={styles.creatorForm}>
       <div className={styles.inputContainer}>
@@ -118,9 +203,9 @@ const CreateCharacter = () => {
               onChange={(e) => dispatch({ type: "SET_BLOOD_TYPE", payload: e.target.value })}
               className={styles.select}
             >
-              <option value="red">Vermelho</option>
-              <option value="silver">Prateado</option>
-              <option value="newblood">Sangue-Novo</option>
+              <option value="Vermelho">Vermelho</option>
+              <option value="Prateado">Prateado</option>
+              <option value="Sangue-Novo">Sangue-Novo</option>
     
             </select>
           </label>
@@ -145,7 +230,7 @@ const CreateCharacter = () => {
         </button> 
       </form>
       
-    </div>
+    </div> */}
     </>
   );
 };
